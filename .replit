@@ -6,3 +6,15 @@ channel = "stable-25_05"
 
 [deployment]
 run = ["sh", "-c", "npm run start"]
+
+[workflows]
+runButton = "Android Dev"
+
+[[workflows.workflow]]
+name = "Android Dev"
+author = 45808574
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx react-native start"
