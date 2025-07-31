@@ -9,6 +9,7 @@ import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -37,7 +38,7 @@ const Login = ({ onLogin }: LoginProps) => {
         requestStoragePermission();
 
     }, []);
-   
+
     const requestStoragePermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -109,7 +110,7 @@ const Login = ({ onLogin }: LoginProps) => {
         return null;
       }
     };
-    
+
     // Usage
     getLocationFromIP().then((location) => {
       if (location) {
@@ -430,7 +431,7 @@ const Login = ({ onLogin }: LoginProps) => {
     };
 
 
-   
+
 
     //login
     const handleLogin = async () => {
@@ -502,7 +503,7 @@ const Login = ({ onLogin }: LoginProps) => {
                     <Text style={styles.logoText}>EliteCap</Text>
                     <Text style={[styles.logoText, { fontSize: 16, opacity: 0.8 }]}>Version: {appVersion}</Text>
                 </View>
-                
+
                 <View style={styles.inputContainer}>
                     <Image source={emailimg} style={styles.inputIcon} />
                     <TextInput
@@ -515,7 +516,7 @@ const Login = ({ onLogin }: LoginProps) => {
                         keyboardType="email-address"
                     />
                 </View>
-                
+
                 <View style={styles.inputContainer}>
                     <Image source={keyimg} style={styles.inputIcon} />
                     <TextInput
@@ -528,7 +529,7 @@ const Login = ({ onLogin }: LoginProps) => {
                         autoCapitalize='none'
                     />
                 </View>
-                
+
                 <View style={styles.checkboxContainer}>
                     <Switch
                         trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -539,23 +540,23 @@ const Login = ({ onLogin }: LoginProps) => {
                     />
                     <Text style={styles.label}>Show Password</Text>
                 </View>
-                
+
                 <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
                     <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity onPress={forgotpass} style={styles.linkButton}>
                     <Text style={styles.linkText}>Forgot Your Password?</Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity onPress={register} style={styles.linkButton}>
                     <Text style={styles.linkText}>Not a Member? Sign Up Now</Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity onPress={support} style={styles.linkButton}>
                     <Text style={styles.linkText}>Contact Us</Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity onPress={env} style={styles.hiddenButton}>
                     <Text style={styles.hiddenText}>.</Text>
                 </TouchableOpacity>
@@ -584,7 +585,7 @@ const Login = ({ onLogin }: LoginProps) => {
                         />
                         <Text style={[styles.label, { color: '#333' }]}>Show Password</Text>
                     </View>
-                    
+
                     <View style={styles.dialogButtonContainer}>
                         <TouchableOpacity style={[styles.dialogButton, styles.okButton]} onPress={handleAdd}>
                             <Text style={styles.dialogButtonText}>OK</Text>
