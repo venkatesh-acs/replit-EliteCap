@@ -693,49 +693,62 @@ const Home = () => {
                     />
                 )}
 
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.inputContainer}>
                     <TextInput
                         onChangeText={(text) => setDescription(text)}
                         style={styles.textInput}
                         value={description}
                         placeholder="Enter Description"
-                        placeholderTextColor='black'
+                        placeholderTextColor='#666'
                         autoCapitalize='none'
                     />
-                    <TouchableOpacity onPress={clearDesc} style={{ width: '20%', backgroundColor: 'lightgreen', justifyContent: 'center', alignContent: 'center', marginLeft: 20, borderRadius: 5, padding: 10, marginTop: 20 }}>
-                        <Text style={{ textAlign: 'center' }}>Clear</Text>
+                    <TouchableOpacity onPress={clearDesc} style={styles.clearButton}>
+                        <Text style={styles.clearButtonText}>Clear</Text>
                     </TouchableOpacity>
                 </View>
                 
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
-                    <TouchableOpacity onPress={() => { setShowCamera(true); setCameraMode('photo'); }}>
+                <View style={styles.actionButtonsContainer}>
+                    <TouchableOpacity 
+                        onPress={() => { setShowCamera(true); setCameraMode('photo'); }}
+                        style={styles.actionButton}
+                    >
                         <Image source={camimg} style={styles.buttonImage} />
                     </TouchableOpacity>
-                    {!recording && (
-                        <TouchableOpacity onPress={onStartRecord} style={styles.uploadButton}>
+                    
+                    {!recording ? (
+                        <TouchableOpacity onPress={onStartRecord} style={styles.actionButton}>
                             <Image source={audiogreen} style={styles.buttonImage} />
                         </TouchableOpacity>
-                    )}
-                    {recording && (
-                        <TouchableOpacity onPress={onStopRecord} style={styles.uploadButton}>
-                            <Image source={audiored} style={styles.buttonImage} />
+                    ) : (
+                        <TouchableOpacity onPress={onStopRecord} style={[styles.actionButton, styles.recordingButton]}>
+                            <Image source={audiored} style={[styles.buttonImage, { tintColor: 'white' }]} />
                         </TouchableOpacity>
                     )}
-                    {recording && <Text style={styles.durationText}> {duration}s</Text>}
-                    <TouchableOpacity onPress={() => { setShowCamera(true); setCameraMode('video'); }}>
+                    
+                    <TouchableOpacity 
+                        onPress={() => { setShowCamera(true); setCameraMode('video'); }}
+                        style={styles.actionButton}
+                    >
                         <Image source={vidimg} style={styles.buttonImage} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleUpload}>
-                    <View style={styles.imageContainer}>
-                        <Image source={upimg} style={styles.buttonImage} />
+                
+                {recording && (
+                    <View style={styles.durationContainer}>
+                        <Text style={styles.durationText}>{duration}s</Text>
+                    </View>
+                )}
+                
+                <View style={styles.uploadContainer}>
+                    <TouchableOpacity onPress={handleUpload} style={styles.uploadButton}>
+                        <Image source={upimg} style={styles.uploadButtonImage} />
                         {uploadCount > 0 && (
-                            <View style={styles.overlay}>
+                            <View style={styles.uploadBadge}>
                                 <Text style={styles.uploadCount}>{uploadCount}</Text>
                             </View>
                         )}
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
                 {device ? (
                     <>
                         {showCamera && (
@@ -758,18 +771,22 @@ const Home = () => {
                                             )}
                                         </View>
                                         <View style={styles.buttonContainer}>
-                                            <TouchableOpacity onPress={handleCapture} >
-                                                <TouchableOpacity
-                                                    style={[styles.captureButton, { backgroundColor: isRecording ? '#FF0000' : '#28A745' }]}
-                                                    onPress={handleCapture}
-                                                >
-                                                    <Text style={styles.buttonText}>
-                                                        {cameraMode === 'photo' ? 'Capture Photo' : isRecording ? 'Stop Video' : 'Start Video'}
-                                                    </Text>
-                                                </TouchableOpacity>
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.captureButton,
+                                                    isRecording && styles.captureButtonRecording
+                                                ]}
+                                                onPress={handleCapture}
+                                            >
+                                                <Text style={[
+                                                    styles.buttonText,
+                                                    isRecording && styles.buttonTextRecording
+                                                ]}>
+                                                    {cameraMode === 'photo' ? 'Capture Photo' : isRecording ? 'Stop Video' : 'Start Video'}
+                                                </Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity onPress={backtocapture} style={{ padding: 10 }}>
-                                                <Image source={preimg} style={{ marginRight: 10, width: 60, height: 60, alignItems: 'center' }} />
+                                            <TouchableOpacity onPress={backtocapture} style={styles.backButton}>
+                                                <Image source={preimg} style={styles.backButtonImage} />
                                             </TouchableOpacity>
                                         </View>
                                     </View>
@@ -807,96 +824,221 @@ const Home = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 2,
         justifyContent: 'center'
     },
     image: {
         flex: 1,
         resizeMode: 'cover',
     },
-    textInput: {
-        width: '60%',
+    inputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
         marginTop: 20,
-        backgroundColor: 'white',
-        borderRadius: 5,
-        padding: 10
+    },
+    textInput: {
+        flex: 1,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: 12,
+        padding: 15,
+        fontSize: 16,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    clearButton: {
+        backgroundColor: '#4CAF50',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 15,
+        borderRadius: 12,
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    clearButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    actionButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        marginTop: 40,
+        paddingHorizontal: 20,
+    },
+    actionButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 5.46,
+        elevation: 9,
+        marginHorizontal: 10,
     },
     buttonImage: {
-        width: 60,
-        height: 60,
-        marginLeft: 20,
-        backgroundColor: 'white',
-        borderRadius: 40
+        width: 45,
+        height: 45,
+        tintColor: '#333',
+    },
+    recordingButton: {
+        backgroundColor: '#FF4444',
+    },
+    durationContainer: {
+        alignItems: 'center',
+        marginTop: 10,
     },
     durationText: {
-        marginTop: 5,
         fontSize: 18,
-        color: 'black'
+        color: 'white',
+        fontWeight: 'bold',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 15,
+    },
+    uploadContainer: {
+        alignItems: 'center',
+        marginTop: 40,
     },
     uploadButton: {
-        padding: 10,
-        marginHorizontal: 5,
-        // marginTop: 20,
-        marginRight: 5,
-    },
-    imageContainer: {
         position: 'relative',
         alignItems: 'center',
-        marginTop: 20
+        justifyContent: 'center',
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 7.49,
+        elevation: 12,
+    },
+    uploadButtonImage: {
+        width: 50,
+        height: 50,
+        tintColor: '#2196F3',
+    },
+    uploadBadge: {
+        position: 'absolute',
+        top: -5,
+        right: -5,
+        backgroundColor: '#FF4444',
+        borderRadius: 15,
+        minWidth: 30,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: 'white',
     },
     uploadCount: {
-        color: 'black',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-    overlay: {
-        position: 'absolute',
-        top: +20, // Adjust top position
-        // left: +40, // Adjust left position
-        // backgroundColor: 'rgba(0, 0,0, 0.3)',
-        padding: 4,
-        borderRadius: 5,
-        justifyContent: 'center',
-        marginLeft: 20
+        color: 'white',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     noCameraText: {
         textAlign: 'center',
         fontSize: 18,
-        color: 'red',
+        color: '#FF4444',
         margin: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        padding: 15,
+        borderRadius: 10,
+        marginHorizontal: 40,
     },
     timerContainer: {
         position: 'absolute',
-        top: 50, // Adjust position as needed
-        left: '50%',
-        transform: [{ translateX: -50 }],
+        top: 60,
+        alignSelf: 'center',
         zIndex: 101,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
     },
     timerText: {
-        fontSize: 20,
+        fontSize: 24,
         color: 'white',
-        marginBottom: 10,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
     buttonContainer: {
         position: 'absolute',
-        top: '65%',
+        bottom: 100,
         left: 20,
         right: 20,
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     captureButton: {
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        borderRadius: 5,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        paddingVertical: 18,
+        paddingHorizontal: 30,
+        borderRadius: 25,
         alignItems: 'center',
-        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    captureButtonRecording: {
+        backgroundColor: '#FF4444',
     },
     buttonText: {
-        color: 'white',
+        color: '#333',
         fontSize: 16,
+        fontWeight: 'bold',
     },
-
+    buttonTextRecording: {
+        color: 'white',
+    },
+    backButton: {
+        padding: 15,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: 25,
+        marginHorizontal: 5,
+    },
+    backButtonImage: {
+        width: 30,
+        height: 30,
+        tintColor: 'white',
+    },
 })
 
 export default Home

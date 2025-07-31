@@ -499,34 +499,36 @@ const Login = ({ onLogin }: LoginProps) => {
             <ImageBackground source={imagename} style={styles.image}>
                 <View style={styles.imageContainer}>
                     <Image source={caplogimg} style={styles.centeredImage} />
-                    {/* <Image source={logoimg} style={styles.centeredImage1} /> */}
                     <Text style={styles.logoText}>EliteCap</Text>
-                    <Text style={styles.logoText}>Version:{appVersion}</Text>
-
+                    <Text style={[styles.logoText, { fontSize: 16, opacity: 0.8 }]}>Version: {appVersion}</Text>
                 </View>
-                <View>
+                
+                <View style={styles.inputContainer}>
+                    <Image source={emailimg} style={styles.inputIcon} />
                     <TextInput
                         onChangeText={(text) => setEmail(text)}
                         style={styles.textInput}
                         placeholder="Email"
-                        placeholderTextColor="black"
+                        placeholderTextColor="#666"
                         value={email}
                         autoCapitalize='none'
+                        keyboardType="email-address"
                     />
-                    <Image source={emailimg} style={styles.images} />
                 </View>
-                <View>
+                
+                <View style={styles.inputContainer}>
+                    <Image source={keyimg} style={styles.inputIcon} />
                     <TextInput
                         onChangeText={(text) => setPassword(text)}
                         style={styles.textInput}
                         secureTextEntry={!showPassword}
                         placeholder="Enter Password"
-                        placeholderTextColor="black"
+                        placeholderTextColor="#666"
                         value={password}
                         autoCapitalize='none'
                     />
-                    <Image source={keyimg} style={styles.images} />
                 </View>
+                
                 <View style={styles.checkboxContainer}>
                     <Switch
                         trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -537,40 +539,42 @@ const Login = ({ onLogin }: LoginProps) => {
                     />
                     <Text style={styles.label}>Show Password</Text>
                 </View>
-                <TouchableOpacity onPress={handleLogin} style={{
-                    alignItems: 'center', backgroundColor: "#088F8F", paddingVertical: 5, paddingHorizontal: 20, borderRadius: 5,
-                    width: '70%', marginLeft: '15%', marginTop: 5
-                }}>
-                    <Text style={styles.buttonText3}>LOGIN</Text>
+                
+                <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+                    <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={forgotpass} style={{ alignItems: 'center', }}>
-                    <Text style={styles.buttonText}>Forgot Your Password?</Text>
+                
+                <TouchableOpacity onPress={forgotpass} style={styles.linkButton}>
+                    <Text style={styles.linkText}>Forgot Your Password?</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={register} style={{ alignItems: 'center', }}>
-                    <Text style={styles.buttonText}>Not a Member Sign Up Now</Text>
+                
+                <TouchableOpacity onPress={register} style={styles.linkButton}>
+                    <Text style={styles.linkText}>Not a Member? Sign Up Now</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={support} style={{ alignItems: 'center', }}>
-                    <Text style={styles.buttonText}>Contact Us</Text>
+                
+                <TouchableOpacity onPress={support} style={styles.linkButton}>
+                    <Text style={styles.linkText}>Contact Us</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={env} style={{ alignItems: 'center' }}>
-                    <Text style={styles.buttonText1}>.</Text>
+                
+                <TouchableOpacity onPress={env} style={styles.hiddenButton}>
+                    <Text style={styles.hiddenText}>.</Text>
                 </TouchableOpacity>
             </ImageBackground>
 
-            <Dialog visible={openDialog} style={{ zIndex: 10, marginTop: 10, margin: 60 }} >
-                <View>
-                    <Text style={styles.heading1}>Enter Password</Text>
+            <Dialog visible={openDialog} style={{ zIndex: 10 }} >
+                <View style={styles.dialogContainer}>
+                    <Text style={styles.dialogTitle}>Enter Password</Text>
                     <TextInput
-                        style={styles.inputcss}
+                        style={styles.dialogInput}
                         placeholder="Enter Password"
                         value={passwords}
                         onChangeText={setPasswords}
-                        placeholderTextColor='black'
+                        placeholderTextColor='#666'
                         secureTextEntry={!showPasswordEnv}
                         autoCapitalize='none'
                     />
 
-                    <View style={styles.checkboxContainer}>
+                    <View style={[styles.checkboxContainer, { justifyContent: 'flex-start', marginLeft: 0 }]}>
                         <Switch
                             trackColor={{ false: '#767577', true: '#81b0ff' }}
                             thumbColor={showPasswordEnv ? '#f5dd4b' : '#f4f3f4'}
@@ -578,14 +582,15 @@ const Login = ({ onLogin }: LoginProps) => {
                             onValueChange={toggleSwitch1}
                             value={showPasswordEnv}
                         />
-                        <Text style={styles.label}>Show Password</Text>
+                        <Text style={[styles.label, { color: '#333' }]}>Show Password</Text>
                     </View>
-                    <View style={styles.dialogContent}>
-                        <TouchableOpacity style={styles.ovalButton2} onPress={handleAdd}>
-                            <Text style={styles.buttonTexts}>Ok</Text>
+                    
+                    <View style={styles.dialogButtonContainer}>
+                        <TouchableOpacity style={[styles.dialogButton, styles.okButton]} onPress={handleAdd}>
+                            <Text style={styles.dialogButtonText}>OK</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.ovalButton3} onPress={closedialog}>
-                            <Text style={styles.buttonTexts}>Cancel</Text>
+                        <TouchableOpacity style={[styles.dialogButton, styles.cancelButton]} onPress={closedialog}>
+                            <Text style={styles.dialogButtonText}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -600,137 +605,168 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        // marginTop:5,
-        resizeMode: 'center',
+        resizeMode: 'cover',
         justifyContent: 'center',
     },
     imageContainer: {
         alignItems: 'center',
-        marginVertical: screenHeight * 0.01,
-        marginTop: -170
+        marginBottom: 40,
+        marginTop: -100,
     },
     centeredImage: {
-        width: screenWidth * 0.2,
-        height: screenWidth * 0.2,
+        width: screenWidth * 0.25,
+        height: screenWidth * 0.25,
+        marginBottom: 15,
     },
-    centeredImage1: {
-        width: 300,
-        height: 50,
+    logoText: {
+        fontSize: 28,
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 3,
+        marginBottom: 5,
+    },
+    inputContainer: {
+        marginHorizontal: 20,
+        marginBottom: 15,
+        position: 'relative',
     },
     textInput: {
-        borderColor: 'black',
-        borderBottomWidth: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginTop: 20,
-        backgroundColor: 'white',
-        marginLeft: '2.5%',
-        width: '95%',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderRadius: 12,
+        paddingVertical: 15,
+        paddingHorizontal: 50,
+        fontSize: 16,
         color: 'black',
-        height: 50
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
     },
-    images: {
+    inputIcon: {
         position: 'absolute',
-        right: 20,
-        top: 20,
-        width: '10%',
+        left: 15,
+        top: 15,
+        width: 20,
+        height: 20,
+        tintColor: '#666',
     },
     checkboxContainer: {
         flexDirection: 'row',
-        alignSelf: 'center',
-        marginTop: 20,
-        marginLeft: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 20,
     },
     label: {
         marginLeft: 10,
-        color: 'black',
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '500',
     },
-    buttonTexts: {
+    loginButton: {
+        backgroundColor: '#2196F3',
+        marginHorizontal: 40,
+        borderRadius: 25,
+        paddingVertical: 15,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
+        marginBottom: 20,
+    },
+    loginButtonText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 22,
-
+        fontSize: 18,
+        letterSpacing: 1,
     },
-    buttonText3: {
+    linkButton: {
+        alignItems: 'center',
+        marginVertical: 8,
+    },
+    linkText: {
         color: 'white',
-        fontWeight: 'bold',
-        fontSize: 22,
-        // borderWidth: 1,
-        margin: 2,
-        borderRadius: 5,
-        // backgroundColor: 'black',
-    },
-    background: {
-        position: 'absolute',
-        width: screenWidth * 1.2, // Enlarge width
-        height: screenHeight * 1.2, // Enlarge height
-        top: -(screenHeight * 0.1), // Center the larger image
-        left: -(screenWidth * 0.1), // Center the larger image
-    },
-    buttonText: {
-        color: "white",
-        fontSize: 22,
-        textDecorationColor: 'blue',
+        fontSize: 16,
         textDecorationLine: 'underline',
-        marginTop: 10
+        textShadowColor: 'rgba(0, 0, 0, 0.3)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
     },
-    buttonText1: {
-        color: "black",
-        fontWeight: "bold",
-        textDecorationColor: 'blue',
-        marginTop: 30
-    },
-    ovalButton2: {
-        backgroundColor: 'green',
-        borderRadius: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginHorizontal: 10,
-        justifyContent: 'center',
+    hiddenButton: {
         alignItems: 'center',
-        width: 100,
+        marginTop: 20,
     },
-    ovalButton3: {
-        backgroundColor: 'blue',
-        borderRadius: 30,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        marginHorizontal: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 150
+    hiddenText: {
+        color: 'transparent',
+        fontSize: 16,
     },
-    dialogContent: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+    dialogContainer: {
+        backgroundColor: 'white',
+        borderRadius: 15,
+        padding: 20,
+        margin: 30,
     },
-    inputcss: {
-        width: '90%',
-        height: 40,
+    dialogTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#333',
+        marginBottom: 20,
+    },
+    dialogInput: {
         borderColor: '#ddd',
         borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
+        borderRadius: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 12,
+        fontSize: 16,
         color: 'black',
-        marginBottom: 10,
+        marginBottom: 15,
+    },
+    dialogButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
         marginTop: 20,
-        marginLeft: '5%'
     },
-    heading1: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginLeft: '30%',
-        color: 'black',
-        // alignItems:'center'
+    dialogButton: {
+        borderRadius: 25,
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        minWidth: 80,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
-    logoText: {
-        fontSize: 20,
+    okButton: {
+        backgroundColor: '#4CAF50',
+    },
+    cancelButton: {
+        backgroundColor: '#2196F3',
+    },
+    dialogButtonText: {
         color: 'white',
-        fontWeight: '500'
-    }
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
 });
 
 

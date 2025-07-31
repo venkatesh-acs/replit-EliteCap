@@ -17,13 +17,29 @@ const  BottomTabNavigator = () =>  {
         <Tab.Navigator
           initialRouteName="home"
           screenOptions={{
-            tabBarActiveTintColor: '#694fad', // Label color for the active tab
-            tabBarInactiveTintColor: 'gray', // Label color for inactive tabs
+            tabBarActiveTintColor: '#2196F3',
+            tabBarInactiveTintColor: '#666',
             tabBarStyle: {
-              backgroundColor: '#ffffff', 
-              height:60
+              backgroundColor: '#ffffff',
+              height: 70,
+              paddingBottom: 10,
+              paddingTop: 5,
+              borderTopWidth: 1,
+              borderTopColor: '#E0E0E0',
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: -2,
+              },
+              shadowOpacity: 0.1,
+              shadowRadius: 3.84,
+              elevation: 5,
             },
-            headerShown: false, // Hide headers if not needed
+            headerShown: false,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              fontWeight: '600',
+            },
           }}
         >
           <Tab.Screen
@@ -31,11 +47,14 @@ const  BottomTabNavigator = () =>  {
             component={Home}
             options={{
               tabBarLabel: 'Home',
-              tabBarLabelStyle:{fontSize:15},
               tabBarIcon: ({ focused }) => (
                 <Image
                   source={homeimg}
-                  style={[styles.icon, focused && styles.activeIcon]}
+                  style={[
+                    styles.icon, 
+                    { tintColor: focused ? '#2196F3' : '#666' },
+                    focused && styles.activeIcon
+                  ]}
                 />
               ),
             }}
@@ -44,12 +63,15 @@ const  BottomTabNavigator = () =>  {
             name="mymedia"
             component={MyMedia}
             options={{
-              tabBarLabel: 'MyMedia',
-              tabBarLabelStyle:{fontSize:15},
+              tabBarLabel: 'My Media',
               tabBarIcon: ({ focused }) => (
                 <Image
                   source={calimg}
-                  style={[styles.icon, focused && styles.activeIcon]}
+                  style={[
+                    styles.icon, 
+                    { tintColor: focused ? '#2196F3' : '#666' },
+                    focused && styles.activeIcon
+                  ]}
                 />
               ),
             }}
@@ -58,12 +80,15 @@ const  BottomTabNavigator = () =>  {
             name="sharedmedia"
             component={SharedMedia}
             options={{
-              tabBarLabel: 'Shared Media',
-              tabBarLabelStyle:{fontSize:15},
+              tabBarLabel: 'Shared',
               tabBarIcon: ({ focused }) => (
                 <Image
                   source={shareimg}
-                  style={[styles.icon, focused && styles.activeIcon]}
+                  style={[
+                    styles.icon, 
+                    { tintColor: focused ? '#2196F3' : '#666' },
+                    focused && styles.activeIcon
+                  ]}
                 />
               ),
             }}
@@ -74,12 +99,13 @@ const  BottomTabNavigator = () =>  {
     
     const styles = StyleSheet.create({
       icon: {
-        width: 30,
-        height: 30,
-        marginBottom: 4,
+        width: 28,
+        height: 28,
+        marginBottom: 2,
       },
       activeIcon: {
-        transform: [{ scale: 1.3 }], // Slightly increase size for active icon
+        transform: [{ scale: 1.2 }],
+        tintColor: '#2196F3',
       },
     });
     
