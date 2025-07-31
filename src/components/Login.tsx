@@ -1,4 +1,4 @@
-import { Alert, Button, Dimensions, Image, ImageBackground, PermissionsAndroid, Platform, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Button, Dimensions, Image, ImageBackground, PermissionsAndroid, Platform, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, StatusBar } from 'react-native'
 import React, { Component, useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,7 @@ import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GlobalStyles, colors, spacing, borderRadius, shadow } from '../styles/GlobalStyles';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -33,6 +34,8 @@ const Login = ({ onLogin }: LoginProps) => {
     const [currentLat, setLat] = useState('')
     const [currentLong, setLong] = useState('')
     const [locationPermission, setLocationPermission] = useState<boolean | null>(null);
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
     useEffect(() => {
         requestCameraPermission()
         requestStoragePermission();
@@ -496,223 +499,268 @@ const Login = ({ onLogin }: LoginProps) => {
     const pkg = require('../../package.json');
     const appVersion = pkg.version;
     return (
-        <View style={styles.container}>
-            <ImageBackground source={imagename} style={styles.image}>
-                <View style={styles.imageContainer}>
-                    <Image source={caplogimg} style={styles.centeredImage} />
-                    <Text style={styles.logoText}>EliteCap</Text>
-                    <Text style={[styles.logoText, { fontSize: 16, opacity: 0.8 }]}>Version: {appVersion}</Text>
-                </View>
+        <SafeAreaView style={[GlobalStyles.safeArea, { backgroundColor: colors.background }]}>
+            <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardAvoidingView}
+            >
+                <ScrollView
+                    contentContainerStyle={styles.scrollContainer}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View style={styles.container}>
+                        <View style={styles.logoContainer}>
+                            <View style={styles.logoWrapper}>
+                                <Image
+                                    source={require('../assets/ic_logo.png')}
+                                    style={styles.logo}
+                                    resizeMode="contain"
+                                />
+                            </View>
+                            <Text style={styles.title}>Welcome Back</Text>
+                            <Text style={styles.subtitle}>Sign in to your EliteCap account</Text>
+                        </View>
 
-                <View style={styles.inputContainer}>
-                    <Image source={emailimg} style={styles.inputIcon} />
-                    <TextInput
-                        onChangeText={(text) => setEmail(text)}
-                        style={styles.textInput}
-                        placeholder="Email"
-                        placeholderTextColor="#666"
-                        value={email}
-                        autoCapitalize='none'
-                        keyboardType="email-address"
-                    />
-                </View>
+                        <View style={styles.formContainer}>
+                            <View style={styles.inputContainer}>
+                                <Image
+                                    source={require('../assets/ic_person.png')}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={[
+                                        GlobalStyles.input,
+                                        styles.input,
+                                        emailFocused && GlobalStyles.inputFocused
+                                    ]}
+                                    placeholder="Email address"
+                                    placeholderTextColor={colors.gray[400]}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    onFocus={() => setEmailFocused(true)}
+                                    onBlur={() => setEmailFocused(false)}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                />
+                            </View>
 
-                <View style={styles.inputContainer}>
-                    <Image source={keyimg} style={styles.inputIcon} />
-                    <TextInput
-                        onChangeText={(text) => setPassword(text)}
-                        style={styles.textInput}
-                        secureTextEntry={!showPassword}
-                        placeholder="Enter Password"
-                        placeholderTextColor="#666"
-                        value={password}
-                        autoCapitalize='none'
-                    />
-                </View>
+                            <View style={styles.inputContainer}>
+                                <Image
+                                    source={require('../assets/ic_key.png')}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={[
+                                        GlobalStyles.input,
+                                        styles.input,
+                                        passwordFocused && GlobalStyles.inputFocused
+                                    ]}
+                                    placeholder="Password"
+                                    placeholderTextColor={colors.gray[400]}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    onFocus={() => setPasswordFocused(true)}
+                                    onBlur={() => setPasswordFocused(false)}
+                                    secureTextEntry={!showPassword}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                />
+                                <TouchableOpacity
+                                    style={styles.eyeIcon}
+                                    onPress={() => setShowPassword(!showPassword)}
+                                    activeOpacity={0.7}
+                                >
+                                    <Image
+                                        source={require('../assets/ic_eyeview.png')}
+                                        style={[
+                                            styles.eyeImage,
+                                            { tintColor: showPassword ? colors.primary : colors.gray[400] }
+                                        ]}
+                                    />
+                                </TouchableOpacity>
+                            </View>
 
-                <View style={styles.checkboxContainer}>
-                    <Switch
-                        trackColor={{ false: '#767577', true: '#81b0ff' }}
-                        thumbColor={showPassword ? '#f5dd4b' : '#f4f3f4'}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={showPassword}
-                    />
-                    <Text style={styles.label}>Show Password</Text>
-                </View>
+                            <TouchableOpacity
+                                style={[
+                                    GlobalStyles.button,
+                                    styles.loginButton,
+                                    isLoading && styles.loginButtonDisabled
+                                ]}
+                                onPress={handleLogin}
+                                disabled={isLoading}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={[GlobalStyles.buttonText, styles.loginButtonText]}>
+                                    {isLoading ? 'Signing In...' : 'Sign In'}
+                                </Text>
+                            </TouchableOpacity>
 
-                <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-                    <Text style={styles.loginButtonText}>LOGIN</Text>
-                </TouchableOpacity>
+                            <View style={styles.linkContainer}>
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('ForgotPassword')}
+                                    activeOpacity={0.7}
+                                >
+                                    <Text style={styles.linkText}>Forgot Password?</Text>
+                                </TouchableOpacity>
+                            </View>
 
-                <TouchableOpacity onPress={forgotpass} style={styles.linkButton}>
-                    <Text style={styles.linkText}>Forgot Your Password?</Text>
-                </TouchableOpacity>
+                            <View style={styles.divider}>
+                                <View style={styles.dividerLine} />
+                                <Text style={styles.dividerText}>or</Text>
+                                <View style={styles.dividerLine} />
+                            </View>
 
-                <TouchableOpacity onPress={register} style={styles.linkButton}>
-                    <Text style={styles.linkText}>Not a Member? Sign Up Now</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={support} style={styles.linkButton}>
-                    <Text style={styles.linkText}>Contact Us</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={env} style={styles.hiddenButton}>
-                    <Text style={styles.hiddenText}>.</Text>
-                </TouchableOpacity>
-            </ImageBackground>
-
-            <Dialog visible={openDialog} style={{ zIndex: 10 }} >
-                <View style={styles.dialogContainer}>
-                    <Text style={styles.dialogTitle}>Enter Password</Text>
-                    <TextInput
-                        style={styles.dialogInput}
-                        placeholder="Enter Password"
-                        value={passwords}
-                        onChangeText={setPasswords}
-                        placeholderTextColor='#666'
-                        secureTextEntry={!showPasswordEnv}
-                        autoCapitalize='none'
-                    />
-
-                    <View style={[styles.checkboxContainer, { justifyContent: 'flex-start', marginLeft: 0 }]}>
-                        <Switch
-                            trackColor={{ false: '#767577', true: '#81b0ff' }}
-                            thumbColor={showPasswordEnv ? '#f5dd4b' : '#f4f3f4'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleSwitch1}
-                            value={showPasswordEnv}
-                        />
-                        <Text style={[styles.label, { color: '#333' }]}>Show Password</Text>
+                            <TouchableOpacity
+                                style={[GlobalStyles.buttonOutline, styles.registerButton]}
+                                onPress={() => navigation.navigate('Register')}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={[GlobalStyles.buttonTextOutline, styles.registerButtonText]}>
+                                    Create New Account
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
-                    <View style={styles.dialogButtonContainer}>
-                        <TouchableOpacity style={[styles.dialogButton, styles.okButton]} onPress={handleAdd}>
-                            <Text style={styles.dialogButtonText}>OK</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.dialogButton, styles.cancelButton]} onPress={closedialog}>
-                            <Text style={styles.dialogButtonText}>Cancel</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Dialog>
-        </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    keyboardAvoidingView: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        minHeight: screenHeight * 0.9,
+    },
     container: {
         flex: 1,
+        backgroundColor: colors.background,
+        paddingHorizontal: spacing.lg,
     },
-    image: {
-        flex: 1,
-        resizeMode: 'cover',
-        justifyContent: 'center',
-    },
-    imageContainer: {
+    logoContainer: {
         alignItems: 'center',
-        marginBottom: 40,
-        marginTop: -100,
+        marginTop: screenHeight * 0.08,
+        marginBottom: spacing.xl,
     },
-    centeredImage: {
-        width: screenWidth * 0.25,
-        height: screenWidth * 0.25,
-        marginBottom: 15,
+    logoWrapper: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: colors.white,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: spacing.lg,
+        ...shadow.lg,
     },
-    logoText: {
-        fontSize: 28,
-        color: 'white',
-        fontWeight: 'bold',
+    logo: {
+        width: 60,
+        height: 60,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: '800',
+        color: colors.text.primary,
+        marginBottom: spacing.sm,
+        letterSpacing: -0.5,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: colors.text.secondary,
         textAlign: 'center',
-        textShadowColor: 'rgba(0, 0, 0, 0.5)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 3,
-        marginBottom: 5,
+        lineHeight: 22,
+    },
+    formContainer: {
+        flex: 1,
+        paddingTop: spacing.lg,
     },
     inputContainer: {
-        marginHorizontal: 20,
-        marginBottom: 15,
         position: 'relative',
+        marginBottom: spacing.md,
     },
-    textInput: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: 12,
-        paddingVertical: 15,
-        paddingHorizontal: 50,
+    input: {
+        paddingLeft: 52,
         fontSize: 16,
-        color: 'black',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-        borderWidth: 1,
-        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderRadius: borderRadius.lg,
+        fontWeight: '500',
     },
     inputIcon: {
         position: 'absolute',
-        left: 15,
-        top: 15,
+        left: 16,
+        top: 18,
         width: 20,
         height: 20,
-        tintColor: '#666',
+        tintColor: colors.gray[400],
+        zIndex: 1,
     },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 20,
+    eyeIcon: {
+        position: 'absolute',
+        right: 16,
+        top: 14,
+        padding: 8,
+        borderRadius: borderRadius.md,
     },
-    label: {
-        marginLeft: 10,
-        color: 'white',
-        fontSize: 16,
-        fontWeight: '500',
+    eyeImage: {
+        width: 20,
+        height: 20,
     },
     loginButton: {
-        backgroundColor: '#2196F3',
-        marginHorizontal: 40,
-        borderRadius: 25,
-        paddingVertical: 15,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 4.65,
-        elevation: 8,
-        marginBottom: 20,
+        marginTop: spacing.md,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.lg,
+        ...shadow.md,
+    },
+    loginButtonDisabled: {
+        backgroundColor: colors.gray[400],
+        ...shadow.sm,
     },
     loginButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 18,
-        letterSpacing: 1,
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
-    linkButton: {
+    linkContainer: {
         alignItems: 'center',
-        marginVertical: 8,
+        marginTop: spacing.lg,
+        marginBottom: spacing.xl,
     },
     linkText: {
-        color: 'white',
-        fontSize: 16,
-        textDecorationLine: 'underline',
-        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
+        color: colors.primary,
+        fontSize: 15,
+        fontWeight: '600',
     },
-    hiddenButton: {
+    divider: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 20,
+        marginVertical: spacing.xl,
     },
-    hiddenText: {
-        color: 'transparent',
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: colors.border,
+    },
+    dividerText: {
+        marginHorizontal: spacing.md,
+        color: colors.text.tertiary,
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    registerButton: {
+        borderColor: colors.primary,
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        borderRadius: borderRadius.lg,
+    },
+    registerButtonText: {
+        color: colors.primary,
         fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
     dialogContainer: {
         backgroundColor: 'white',
