@@ -6,8 +6,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { ImageBackground } from 'react-native';
 import { LoginService } from '../services/LoginService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DocumentPicker from 'react-native-document-picker';
-
+// import DocumentPicker from 'react-native-document-picker';
+import  DocumentPicker  from '@react-native-documents/picker'
 const imagename = require('../assets/elite.png');
 const caplogimg = require('../assets/ec_icon.png');
 // const pimg = require('../assets/gfn/gfnlogo.png');
@@ -46,19 +46,38 @@ const Support: React.FC = () => {
     const logins = async () => {
         navigation.navigate('login');
     }
+    // const selectFile = async () => {
+    //     try {
+    //         const pickedFile = await DocumentPicker.pickSingle({
+    //             type: [DocumentPicker.types.allFiles],
+    //         });
+    //         setFileUri(pickedFile.uri)
+    //         setFileName(pickedFile.name)
+    //         setFile(pickedFile)
+    //         console.log(pickedFile)
+    //     } catch (error) {
+
+    //     }
+    // }
     const selectFile = async () => {
         try {
-            const pickedFile = await DocumentPicker.pickSingle({
-                type: [DocumentPicker.types.allFiles],
-            });
-            setFileUri(pickedFile.uri)
-            setFileName(pickedFile.name)
-            setFile(pickedFile)
-            console.log(pickedFile)
+          // const pickedFile = await DocumentPicker.pickSingle({
+          //   type: [DocumentPicker.types.allFiles],
+          // });
+          const pickedFiles = await DocumentPicker.pick({
+            type: ['*/*'], // all file types
+          });
+      
+          // DocumentsPicker.pick() might return an array (depending on whether multiple files are supported)
+          const pickedFile = Array.isArray(pickedFiles) ? pickedFiles[0] : pickedFiles;
+          setFileUri(pickedFile.uri)
+          setFileName(pickedFile.name)
+          setFile(pickedFile)
+          console.log(pickedFile)
         } catch (error) {
-
+    
         }
-    }
+      }
     useEffect(() => {
         setDropValue(dropdowndata());
       }, []);

@@ -27,13 +27,13 @@ const slides = [
        image: require('../assets/s3.png'),
       backgroundColor: '#fff',
   },
-  {
-      key: 'four',
-      title: 'Emergency Call',
-      text: 'Discover new features.',
-       image: require('../assets/s4.png'),
-      backgroundColor: '#fff',
-  },
+  // {
+  //     key: 'four',
+  //     title: 'Emergency Call',
+  //     text: 'Discover new features.',
+  //      image: require('../assets/s4.PNG'),
+  //     backgroundColor: '#fff',
+  // },
   {
     key: 'five',
     title: 'Emergency Call',
