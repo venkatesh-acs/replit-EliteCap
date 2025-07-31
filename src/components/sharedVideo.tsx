@@ -1,0 +1,135 @@
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { Component, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LoginService } from '../services/LoginService';
+import Video from 'react-native-video';
+
+const sharedVideo:React.FC = () => {
+    const [videoData, setvideoData] = useState<any>([]);
+    console.log('videoData', videoData);
+    const [mediaId, setMediaIds] = useState<any>([]);
+    const [grades, setGrades] = useState<any[]>([]);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    console.log('selectedImage', selectedImage)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [photoImgData, setVideoImageData] = useState<any>([])
+    useFocusEffect(
+        React.useCallback(() => {
+            getMedia();
+        }, [])
+    );
+
+    const getMedia = async () => {
+        const videoItem = await AsyncStorage.getItem('selected_shared_video') as any;
+        console.log('videoItem', videoItem)
+        const parsedData = typeof videoItem === 'string' ? JSON.parse(videoItem) : videoItem
+        const { mid } = parsedData;
+        const apiname = '/ws_mediaview.php';
+        const payload = { mediaid: mid };
+        console.log('setvideoData_payload', payload)
+        const res = await LoginService.getData(apiname, payload)
+        console.log('setvideoData', res)
+        if (res) {
+            setvideoData(res.MediaViewArray[0]);
+            setVideoImageData(res.MediaViewArray[0]);
+            setMediaIds(res.mediaids.split(','));
+            console.log('split', res.mediaids.split(','))
+            console.log('res.mediaids', res.mediaids)
+            const dynamicGrades = res.mediaids.split(',').map((_: any, index: any) => `a${index + 1}`);
+            console.log('dynamicGrades', dynamicGrades)
+            setGrades(dynamicGrades);
+        }
+    }
+    const getMedia1 = async (grade: any) => {
+        const gradeIndex = grades.indexOf(grade); // Find the index of the clicked grade
+        if (gradeIndex >= 0 && gradeIndex < mediaId.length) {
+            const eventid = mediaId[gradeIndex];
+            const apiname = '/ws_mediaview.php';
+            const payload = { mediaid: eventid };
+            console.log('setvideoData_payload', payload)
+            const res = await LoginService.getData(apiname, payload)
+            console.log('setvideoData', res)
+            if (res) {
+                setvideoData(res.MediaViewArray[0]);
+                setVideoImageData(res.MediaViewArray[0]);
+
+                setMediaIds(res.mediaids.split(','));
+                console.log('split', res.mediaids.split(','))
+                console.log('res.mediaids', res.mediaids)
+                const dynamicGrades = res.mediaids.split(',').map((_: any, index: any) => `a${index + 1}`);
+                console.log('dynamicGrades', dynamicGrades)
+                setGrades(dynamicGrades);
+            }
+        }
+    }
+    return (
+        <View style={styles.container}>
+            {photoImgData.type == 'photo' ?
+                (
+                    < Image source={{ uri: photoImgData.imageurl }} style={{ width: '100%', height: 200, marginTop: 5 }}></Image>
+                ) : (
+                    <Video
+                        source={{ uri: photoImgData.youtube }}
+                        style={{ width: '100%', height: 200, marginTop: 5 }}
+                        controls
+                        resizeMode="cover"
+                        repeat={true}
+                    />
+                )
+            }
+            <Text style={styles.date}>{videoData.vdate}</Text>
+            <View style={styles.name_phone}>
+                <Text style={styles.names}>{videoData.address}</Text>
+            </View>
+            <Text style={styles.date}>{videoData.description}</Text>
+            <View style={{ flexDirection: 'row' }} >
+                <Text style={styles.files}>Media Files:</Text>
+                {grades.map((grade, index) => (
+                    <TouchableOpacity key={index} onPress={() => getMedia1(grade)} >
+                        <Text style={styles.files}>{grade}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+        </View>
+    )
+}
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 5
+    },
+    date: {
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        marginTop: 5
+    },
+    name_phone: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 10,
+        fontSize: 20,
+    },
+    names: {
+        marginRight: 20,
+        fontSize: 20,
+        color: 'black',
+        fontWeight: 'bold',
+    },
+    phones: {
+        marginRight: 20,
+        fontSize: 15,
+        color: 'black',
+        fontWeight: 'bold',
+    },
+    files: {
+        marginLeft: 5,
+        color: 'black',
+        fontWeight: 'bold'
+    },
+})
+
+
+export default sharedVideo

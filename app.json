@@ -1,0 +1,21 @@
+{
+  "name": "elitecap",
+  "displayName": "elitecap",
+  "plugins": [
+    [
+      "react-native-permissions",
+      {
+        "iosPermissions": [
+          "Camera",
+          "Microphone"
+        ]
+      }
+    ]
+  ],
+  "ios": {
+    "infoPlist": {
+      "NSCameraUsageDescription": "We need permission to access your Camera",
+      "NSMicrophoneUsageDescription": "We need permission to access Microphone"
+    }
+  }
+}
